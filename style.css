@@ -1,0 +1,337 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url("https://static.independent.co.uk/2021/12/06/11/iStock-1207566766.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #333;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 80%;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: rgba(255, 215, 0, 0.7);
+  color: #fff;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  margin-bottom: 5px;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.tagline {
+  font-style: italic;
+  color: #666;
+}
+
+.logo-and-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-and-title img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mint-info,
+.project-image,
+.mint-form,
+.invitation {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: rgba(255, 248, 225, 0.7);
+  border-radius: 10px;
+}
+
+.mint-info h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.mint-info p {
+  color: #555;
+}
+
+.project-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mint-form h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.input-group input[type="number"],
+.input-group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+#status,
+#claimStatus,
+#referralStatus {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.neon-header {
+  background-color: #000;
+  padding: 10px 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.neon-text {
+  font-size: 2em;
+  color: #fff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 30px #f0f,
+    0 0 40px #f0f,
+    0 0 50px #f0f,
+    0 0 60px #f0f,
+    0 0 70px #f0f;
+  animation: neonAnimation 15s linear infinite;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@keyframes neonAnimation {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.sales-progress {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.sales-progress label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+#salesPercentage {
+  font-size: 0.9em;
+  color: #777;
+}
+
+footer {
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 20px;
+  background-color: rgba(255, 224, 178, 0.7);
+  font-size: 0.9em;
+  color: #777;
+  border-radius: 10px;
+}
+
+.invitation h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.referral-link {
+  margin-top: 15px;
+}
+
+.referral-link label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.referral-link input[type="text"] {
+  width: 70%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.copy-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+#contractAddress {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #0056b3;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+#contractAddress:hover {
+  color: #007bff;
+}
+
+/* Custom Alert Styles */
+.custom-alert {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 248, 225, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center;
+  display: none;
+  font-weight: bold;
+  color: #333;
+  animation: fadeInOut 3s forwards;
+}
+
+.custom-alert p {
+  margin: 0;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

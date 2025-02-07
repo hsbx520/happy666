@@ -1,0 +1,126 @@
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy MINT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://i.postimg.cc/Y9LJmBQv/photo-2025-02-06-00-55-37.jpg">
+
+  <!-- Load Solana web3 essentials -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+  <!-- Solana web3 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <script type="module" src="script.js"></script>
+</head>
+
+<body>
+  <div class="neon-header">
+    <div class="neon-text">Happy Happy Happy Happy Happy Happy Happy Happy</div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo-and-title">
+        <img src="https://i.postimg.cc/Y9LJmBQv/photo-2025-02-06-00-55-37.jpg" alt="Happy Logo">
+        <h1>Happy MINT</h1>
+      </div>
+      <p class="tagline">让快乐洒满区块链！</p>
+    </header>
+
+    <main>
+      <section class="mint-info">
+        <h2>Happy MINT 规则</h2>
+        <p>HAPPY总供应量为21,000,000，每次铸造可获得10,000个 一个地址最多可以铸造50次，其中25%将加入流动性池，
+          75%用于公开铸造，铸造结束后所得SOL和剩余25%的代币将用于增加流动性，相关权限将被销毁。</p>
+        <p>Happy 代币合约地址: <code id="contractAddress">CKsTj6ELyrRvbELfHbtrcGAYSWgZBC8ttWqgHJGf5c4Z</code> <br>
+          <strong>请勿向此地址转账！</strong>
+        </p>
+
+        <!-- Sales Progress Bar -->
+        <div class="sales-progress">
+          <label for="sales">MINT 进度:</label>
+          <div class="progress-bar">
+            <div class="progress" id="salesProgressBar" style="width: 50%;"></div>
+          </div>
+          <p id="salesPercentage">50%</p>
+        </div>
+      </section>
+
+      <!-- Project Image -->
+      <section class="project-image">
+        <img src="https://i.postimg.cc/5ycDBKmn/photo-2025-02-06-22-28-02-2.jpg" alt="Project Image">
+      </section>
+
+      <section class="mint-form">
+        <h3>铸造你的Happy代币</h3>
+        <div class="input-group">
+          <label for="amount">铸造数量 (单次只能铸造一份):</label>
+          <input type="number" id="amount" name="amount" value="1" min="1" max="1" readonly>
+        </div>
+        <div class="button-container">
+          <button id="connectWallet">连接钱包</button>
+          <button id="mintButton" disabled>铸造 Happy</button>
+        </div>
+        <p id="status">请连接钱包...</p>
+      </section>
+
+      <!-- Invitation Section -->
+      <section class="invitation">
+        <h3>邀请好友，获取奖励</h3>
+        <div class="input-group">
+          <label for="solAddress">输入 SOL 钱包地址:</label>
+          <input type="text" id="solAddress" name="solAddress" placeholder="Your SOL Address">
+        </div>
+        <button id="claimReward">领取 2000 Happy 代币</button>
+        <p id="claimStatus"></p>
+        <div class="referral-link">
+          <label for="referralLink">专属邀请链接:</label>
+          <input type="text" id="referralLink" readonly>
+          <button class="copy-button" data-clipboard-target="#referralLink">复制链接</button>
+        </div>
+        <p id="referralStatus"></p>
+        <p id="invitedCount">已邀期: 0 人</p>
+        <p id="happyAirdrop">等待领取的 Happy 代币: 0</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2024 Happy MINT. 让快乐永存。</p>
+    </footer>
+  </div>
+
+  <div id="customAlert" class="custom-alert">
+    <p id="customAlertMessage"></p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const contractAddress = document.getElementById('contractAddress');
+      const customAlert = document.getElementById('customAlert');
+      const customAlertMessage = document.getElementById('customAlertMessage');
+
+      function showAlert(message) {
+        customAlertMessage.textContent = message;
+        customAlert.style.display = 'block';
+        setTimeout(() => {
+          customAlert.style.display = 'none';
+        }, 3000); // Adjust the duration as needed
+      }
+
+      contractAddress.addEventListener('click', function () {
+        navigator.clipboard.writeText(contractAddress.textContent)
+          .then(() => {
+            showAlert('合约地址已复制到剪贴板!');
+          })
+          .catch(err => {
+            console.error('复制失败: ', err);
+            showAlert('复制失败，请手动复制!');
+          });
+      });
+    });
+  </script>
+</body>
+
+</html>
