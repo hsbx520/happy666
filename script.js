@@ -13,8 +13,6 @@ let programId;
 
 // 检测是否安装了 Phantom 或 OKX 钱包
 const isPhantomInstalled = window.solana && window.solana.isPhantom;
-
-// 如果未安装钱包则禁用连接钱包按钮
 if (!isPhantomInstalled && !window.okxwallet) {
   connectWalletButton.disabled = true;
   statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
@@ -31,13 +29,11 @@ async function connectWallet() {
       statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
       return;
     }
-
-    // Connect to Solana 主网
     await solana.connect();
     payer = { publicKey: solana.publicKey };
 
-    // 使用 Ankr 提供的免费 RPC 服务
-    connection = new solanaWeb3.Connection("https://rpc.ankr.com/solana", 'confirmed');
+    // 使用同一个 RPC 端点作为代理转发后端服务，但用于发送交易时可以直接使用 RPC（此处依然使用官方 RPC）
+    connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", 'confirmed');
 
     statusDisplay.textContent = `已连接钱包: ${payer.publicKey.toBase58()}`;
     connectWalletButton.textContent = '断开钱包';
@@ -65,9 +61,31 @@ async function disconnectWallet() {
 
 connectWalletButton.addEventListener('click', connectWallet);
 
+// 通过代理获取最新 blockhash
+async function getLatestBlockhashViaProxy() {
+  const proxyUrl = "http://localhost:3000/rpc"; // 或替换为你的公开代理服务器地址
+  const requestBody = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "getLatestBlockhash",
+    params: ["confirmed"]
+  };
+
+  const response = await fetch(proxyUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody)
+  });
+  const data = await response.json();
+  if (data.error) {
+    throw new Error(data.error.message);
+  }
+  return data.result;
+}
+
 mintButton.addEventListener('click', async () => {
   const amount = parseInt(amountInput.value);
-  const recipientPublicKey = '2wdjheNt1g6RHQqt4mm12oNt6PX4w53S1ivry31Gm6PD'; // 替换为实际接收方地址
+  const recipientPublicKey = '2wdjheNt1g6RHQqt4mm12oNt6PX4w53S1ivry31Gm6PD'; // 替换为实际地址
   const mintAmount = 10000;
 
   if (isNaN(amount) || amount !== 1) {
@@ -93,11 +111,9 @@ mintButton.addEventListener('click', async () => {
       })
     );
 
-    // 获取最新的 blockhash
-    const { blockhash } = await connection.getLatestBlockhash('confirmed');
+    // 通过代理获取最新的 blockhash
+    const { blockhash } = await getLatestBlockhashViaProxy();
     transaction.recentBlockhash = blockhash;
-
-    // 设置手续费支付者
     transaction.feePayer = payer.publicKey;
 
     let signedTransaction;
@@ -111,11 +127,7 @@ mintButton.addEventListener('click', async () => {
     }
 
     const serializedTransaction = new Uint8Array(signedTransaction.serialize());
-
-    // 发送交易
     const signature = await connection.sendRawTransaction(serializedTransaction);
-
-    // 确认交易
     await connection.confirmTransaction(signature, 'confirmed');
 
     console.log('Transaction completed:', signature);
