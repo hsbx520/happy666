@@ -9,43 +9,35 @@ const statusDisplay = document.getElementById('status');
 
 let payer;
 let connection;
+let programId;
 
-// 检测钱包是否安装
-function isWalletInstalled() {
-  return window.solana || window.okxwallet;
-}
-
-// 获取 Solana 对象
-function getSolana() {
-  if (window.okxwallet) {
-    return window.okxwallet.solana;
-  } else if (window.solana) {
-    return window.solana;
-  }
-  return null;
-}
+// 检测是否安装了 Phantom 或 OKX 钱包
+const isPhantomInstalled = window.solana && window.solana.isPhantom;
 
 // 如果未安装钱包则禁用连接钱包按钮
-if (!isWalletInstalled()) {
+if (!isPhantomInstalled && !window.okxwallet) {
   connectWalletButton.disabled = true;
   statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
 }
 
-// 连接钱包
 async function connectWallet() {
   try {
-    const solana = getSolana();
-    if (!solana) {
+    let solana;
+    if (window.okxwallet) {
+      solana = window.okxwallet.solana;
+    } else if (window.solana) {
+      solana = window.solana;
+    } else {
       statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
       return;
     }
 
-    // 连接钱包
+    // Connect to Solana 主网
     await solana.connect();
     payer = { publicKey: solana.publicKey };
 
-    // 创建连接，使用免费的 Solana 官方 RPC
-    connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", 'confirmed');
+    // 使用 Ankr 提供的免费 RPC 服务
+    connection = new solanaWeb3.Connection("https://rpc.ankr.com/solana", 'confirmed');
 
     statusDisplay.textContent = `已连接钱包: ${payer.publicKey.toBase58()}`;
     connectWalletButton.textContent = '断开钱包';
@@ -59,15 +51,10 @@ async function connectWallet() {
   }
 }
 
-// 断开钱包
 async function disconnectWallet() {
-  const solana = getSolana();
-  if (solana) {
-    await solana.disconnect();
-  }
-
   payer = null;
   connection = null;
+  programId = null;
 
   statusDisplay.textContent = "钱包已断开.";
   connectWalletButton.textContent = '连接钱包';
@@ -76,13 +63,11 @@ async function disconnectWallet() {
   connectWalletButton.addEventListener('click', connectWallet);
 }
 
-// 连接钱包按钮点击事件
 connectWalletButton.addEventListener('click', connectWallet);
 
-// 铸造按钮点击事件
 mintButton.addEventListener('click', async () => {
   const amount = parseInt(amountInput.value);
-  const recipientPublicKey = '2wdjheNt1g6RHQqt4mm12oNt6PX4w53S1ivry31Gm6PD'; // 替换为实际的接收地址
+  const recipientPublicKey = '2wdjheNt1g6RHQqt4mm12oNt6PX4w53S1ivry31Gm6PD'; // 替换为实际接收方地址
   const mintAmount = 10000;
 
   if (isNaN(amount) || amount !== 1) {
@@ -98,7 +83,7 @@ mintButton.addEventListener('click', async () => {
   try {
     statusDisplay.textContent = "铸造中...请等待.";
 
-    // 转账 0.1 SOL
+    // Transfer 0.1 SOL
     const lamports = 0.1 * solanaWeb3.LAMPORTS_PER_SOL;
     const transaction = new solanaWeb3.Transaction().add(
       solanaWeb3.SystemProgram.transfer({
@@ -108,21 +93,23 @@ mintButton.addEventListener('click', async () => {
       })
     );
 
-    // 获取最新区块哈希
-    const { blockhash } = await connection.getLatestBlockhash();
+    // 获取最新的 blockhash
+    const { blockhash } = await connection.getLatestBlockhash('confirmed');
     transaction.recentBlockhash = blockhash;
 
-    // 设置交易费用支付者
+    // 设置手续费支付者
     transaction.feePayer = payer.publicKey;
 
-    // 签署交易
-    const solana = getSolana();
-    if (!solana) {
+    let signedTransaction;
+    if (window.okxwallet) {
+      signedTransaction = await window.okxwallet.solana.signTransaction(transaction);
+    } else if (window.solana) {
+      signedTransaction = await window.solana.signTransaction(transaction);
+    } else {
       statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
       return;
     }
 
-    const signedTransaction = await solana.signTransaction(transaction);
     const serializedTransaction = new Uint8Array(signedTransaction.serialize());
 
     // 发送交易
