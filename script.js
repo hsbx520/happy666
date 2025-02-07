@@ -36,8 +36,8 @@ async function connectWallet() {
     await solana.connect();
     payer = { publicKey: solana.publicKey };
 
-    // 创建连接，使用主网 API 地址
-    connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", 'confirmed');
+    // 创建连接，使用更稳定的 RPC 地址
+    connection = new solanaWeb3.Connection("https://solana-api.projectserum.com", 'confirmed'); // 或其他 RPC 服务商的地址
 
     statusDisplay.textContent = `已连接钱包: ${payer.publicKey.toBase58()}`;
     connectWalletButton.textContent = '断开钱包';
