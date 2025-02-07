@@ -13,19 +13,11 @@ let programId;
 
 // 检测是否安装了 Phantom 或 OKX 钱包
 const isPhantomInstalled = window.solana && window.solana.isPhantom;
-const isOKXWalletInstalled = window.okxwallet;
-const isAndroid = /android/i.test(navigator.userAgent);
 
 // 如果未安装钱包则禁用连接钱包按钮
-if (!isPhantomInstalled && !isOKXWalletInstalled) {
+if (!isPhantomInstalled && !window.okxwallet) {
   connectWalletButton.disabled = true;
-  if (isAndroid) {
-    statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
-    // 提示安卓用户
-    statusDisplay.innerHTML += `<br>建议使用 Chrome 浏览器访问。`;
-  } else {
-    statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
-  }
+  statusDisplay.textContent = "未检测到钱包，请安装 Phantom 钱包 或 OKX 钱包!";
 }
 
 async function connectWallet() {
@@ -44,7 +36,7 @@ async function connectWallet() {
     await solana.connect();
     payer = { publicKey: solana.publicKey };
 
-    // 创建连接
+    // 创建连接，使用主网 API 地址
     connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com", 'confirmed');
 
     statusDisplay.textContent = `已连接钱包: ${payer.publicKey.toBase58()}`;
@@ -101,12 +93,11 @@ mintButton.addEventListener('click', async () => {
       })
     );
 
-    // 获取最新的 blockhash
-    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('finalized');
+    // 获取最新区块哈希
+    const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
-    transaction.lastValidBlockHeight = lastValidBlockHeight;
 
-    // Sign transaction
+    // 签署交易
     transaction.feePayer = payer.publicKey;
 
     let signedTransaction;
@@ -125,7 +116,7 @@ mintButton.addEventListener('click', async () => {
     const signature = await connection.sendRawTransaction(serializedTransaction);
 
     // 确认交易
-    await connection.confirmTransaction(signature, 'finalized');
+    await connection.confirmTransaction(signature, 'confirmed');
 
     console.log('Transaction completed:', signature);
     statusDisplay.textContent = `铸造成功! 交易ID: ${signature}`;
@@ -135,3 +126,19 @@ mintButton.addEventListener('click', async () => {
     statusDisplay.textContent = `铸造失败: ${error.message}`;
   }
 });
+
+// 更新铸造进度条
+function updateSalesProgress(currentSales, totalSupply) {
+  const percentage = (currentSales / totalSupply) * 100;
+  const progressBar = document.getElementById('salesProgressBar');
+  const salesPercentageDisplay = document.getElementById('salesPercentage');
+
+  progressBar.style.width = `${percentage}%`;
+  salesPercentageDisplay.textContent = `${percentage.toFixed(2)}%`;
+}
+
+// 示例用法 (用实际数据替换)
+const totalSupply = 21000000;
+let currentSales = 10500000;
+
+updateSalesProgress(currentSales, totalSupply);
